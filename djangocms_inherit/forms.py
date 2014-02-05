@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.models import Page
 
-from models import InheritPagePlaceholder
+from .models import InheritPagePlaceholder
 
 
 class InheritForm(ModelForm):

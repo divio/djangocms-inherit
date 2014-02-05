@@ -8,8 +8,8 @@ from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
 from cms.utils.moderator import get_cmsplugin_queryset
 
-from forms import InheritForm
-from models import InheritPagePlaceholder
+from .forms import InheritForm
+from .models import InheritPagePlaceholder
 
 
 class InheritPagePlaceholderPlugin(CMSPluginBase):
