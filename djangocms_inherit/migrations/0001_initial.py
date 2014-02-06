@@ -2,19 +2,25 @@
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+from django.db import models, connection
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'InheritPagePlaceholder'
-        db.create_table(u'djangocms_inherit_inheritpageplaceholder', (
-            (u'cmsplugin_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['cms.CMSPlugin'], unique=True, primary_key=True)),
-            ('from_page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['cms.Page'], null=True, blank=True)),
-            ('from_language', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'djangocms_inherit', ['InheritPagePlaceholder'])
+        table_names = connection.introspection.table_names()
+        if 'cmsplugin_inheritpageplaceholder' in table_names:
+            db.rename_table('cmsplugin_inheritpageplaceholder', 'djangocms_inherit_inheritpageplaceholder')
+        elif 'inheritpageplaceholder_inheritpageplaceholder' in table_names:
+            db.rename_table('inherit_inheritpageplaceholder', 'djangocms_inherit_inheritpageplaceholder')
+        else:
+            # Adding model 'InheritPagePlaceholder'
+            db.create_table(u'djangocms_inherit_inheritpageplaceholder', (
+                (u'cmsplugin_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['cms.CMSPlugin'], unique=True, primary_key=True)),
+                ('from_page', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['cms.Page'], null=True, blank=True)),
+                ('from_language', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
+            ))
+            db.send_create_signal(u'djangocms_inherit', ['InheritPagePlaceholder'])
 
 
     def backwards(self, orm):
