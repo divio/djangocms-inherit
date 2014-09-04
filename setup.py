@@ -25,7 +25,7 @@ setup(
     author='Divio AG',
     author_email='info@divio.ch',
     url='https://github.com/divio/djangocms-inherit',
-    packages=['djangocms_inherit', 'djangocms_inherit.migrations'],
+    packages=['djangocms_inherit', 'djangocms_inherit.migrations', 'djangocms_inherit.migrations_django'],
     license='LICENSE.txt',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
