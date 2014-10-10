@@ -7,6 +7,7 @@ from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from cms.utils import get_language_from_request
 from cms.utils.moderator import get_cmsplugin_queryset
+from cms.utils.plugins import downcast_plugins, build_plugin_tree
 
 from .forms import InheritForm
 from .models import InheritPagePlaceholder
@@ -56,6 +57,12 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             inst, name = plg.get_plugin_instance()
             if inst is None:
                 continue
+            # Get child plugins for this plugin instance, if any child plugins exist
+            plugin_tree = downcast_plugins(inst.get_descendants(include_self=True)
+                .order_by('placeholder', 'tree_id', 'level', 'position'))
+            plugin_tree[0].parent_id = None
+            plugin_tree = build_plugin_tree(plugin_tree)
+            inst = plugin_tree[0] #  Replace plugin instance with plugin instance with correct child_plugin_instances set
             outstr = inst.render_plugin(tmpctx, placeholder)
             plugin_output.append(outstr)
         template_vars['parent_output'] = plugin_output
