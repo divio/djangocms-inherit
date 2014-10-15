@@ -58,8 +58,8 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             if inst is None:
                 continue
             # Get child plugins for this plugin instance, if any child plugins exist
-            plugin_tree = downcast_plugins(inst.get_descendants(include_self=True)
-                .order_by('placeholder', 'tree_id', 'level', 'position'))
+            plugin_tree = downcast_plugins([inst] + inst.get_descendants()
+                .order_by('placeholder', 'path'))
             plugin_tree[0].parent_id = None
             plugin_tree = build_plugin_tree(plugin_tree)
             inst = plugin_tree[0] #  Replace plugin instance with plugin instance with correct child_plugin_instances set
