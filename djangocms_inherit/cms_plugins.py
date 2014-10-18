@@ -64,7 +64,7 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
                 plugins = [inst] + list(inst.get_descendants(include_self=True)
                                         .order_by('placeholder', 'tree_id',
                                                   'level', 'position'))
-            except FieldError:
+            except (FieldError, TypeError):
                 # django CMS 3.1+
                 plugins = [inst] + list(inst.get_descendants().order_by('path'))
             plugin_tree = downcast_plugins(plugins)
