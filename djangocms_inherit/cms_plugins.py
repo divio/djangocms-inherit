@@ -1,7 +1,8 @@
 import copy
 
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.core.exceptions import FieldError
+from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
@@ -58,8 +59,15 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             if inst is None:
                 continue
             # Get child plugins for this plugin instance, if any child plugins exist
-            plugin_tree = downcast_plugins([inst] + list(inst.get_descendants()
-                .order_by('path')))
+            try:
+                # django CMS 3-
+                plugins = [inst] + list(inst.get_descendants(include_self=True)
+                                        .order_by('placeholder', 'tree_id',
+                                                  'level', 'position'))
+            except FieldError:
+                # django CMS 3.1+
+                plugins = [inst] + list(inst.get_descendants().order_by('path'))
+            plugin_tree = downcast_plugins(plugins)
             plugin_tree[0].parent_id = None
             plugin_tree = build_plugin_tree(plugin_tree)
             inst = plugin_tree[0] #  Replace plugin instance with plugin instance with correct child_plugin_instances set
