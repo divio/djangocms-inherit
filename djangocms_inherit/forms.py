@@ -9,9 +9,6 @@ from .models import InheritPagePlaceholder
 
 
 class InheritForm(ModelForm):
-    from_page = forms.ModelChoiceField(
-        label=_("page"), queryset=Page.objects.drafts(), required=False)
-    
     class Meta:
         model = InheritPagePlaceholder
         exclude = ('page', 'position', 'placeholder', 'language',

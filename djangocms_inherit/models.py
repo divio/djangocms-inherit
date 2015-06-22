@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.i18n import get_language_tuple
 from cms.models import CMSPlugin, Page
+from cms.models.fields import PageField
 
 
 class InheritPagePlaceholder(CMSPlugin):
@@ -10,8 +11,8 @@ class InheritPagePlaceholder(CMSPlugin):
     Provides the ability to inherit plugins for a certain placeholder from an
     associated "parent" page instance
     """
-    from_page = models.ForeignKey(
-        Page, null=True, blank=True,
+    from_page = PageField(
+        null=True, blank=True,
         help_text=_("Choose a page to include its plugins into this "
                     "placeholder, empty will choose current page"))
 
