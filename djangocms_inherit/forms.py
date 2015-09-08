@@ -15,17 +15,17 @@ from .models import InheritPagePlaceholder
 class InheritForm(ModelForm):
     from_page = forms.ModelChoiceField(
         label=_("page"), queryset=Page.objects.drafts(), required=False)
-    
+
     class Meta:
         model = InheritPagePlaceholder
         exclude = ('page', 'position', 'placeholder', 'language',
                    'plugin_type')
-    
-    def for_site(self, site):    
+
+    def for_site(self, site):
         # override the page_link fields queryset to containt just pages for
         # current site
         self.fields['from_page'].queryset = Page.objects.drafts().on_site(site)
-        
+
     def clean(self):
         cleaned_data = super(InheritForm, self).clean()
         if not cleaned_data['from_page'] and not cleaned_data['from_language']:
