@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import Page
