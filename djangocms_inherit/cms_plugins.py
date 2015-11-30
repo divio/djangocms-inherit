@@ -25,14 +25,14 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
     form = InheritForm
     admin_preview = False
     page_only = True
-    
+
     def render(self, context, instance, placeholder):
         template_vars = {'placeholder': placeholder}
         template_vars['object'] = instance
         lang = instance.from_language
         request = context.get('request', None)
         if not lang:
-            if context.has_key('request'):
+            if 'request' in context:
                 lang = get_language_from_request(request)
             else:
                 lang = settings.LANGUAGE_CODE
@@ -51,14 +51,15 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             parent__isnull=True
         ).order_by('position').select_related()
         plugin_output = []
-        template_vars['parent_plugins'] = plugins 
+        template_vars['parent_plugins'] = plugins
         for plg in plugins:
             tmpctx = copy.copy(context)
             tmpctx.update(template_vars)
             inst, name = plg.get_plugin_instance()
             if inst is None:
                 continue
-            # Get child plugins for this plugin instance, if any child plugins exist
+            # Get child plugins for this plugin instance, if any child plugins
+            # exist
             try:
                 # django CMS 3-
                 plugins = [inst] + list(inst.get_descendants(include_self=True)
@@ -70,36 +71,38 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             plugin_tree = downcast_plugins(plugins)
             plugin_tree[0].parent_id = None
             plugin_tree = build_plugin_tree(plugin_tree)
-            inst = plugin_tree[0] #  Replace plugin instance with plugin instance with correct child_plugin_instances set
+            #  Replace plugin instance with plugin instance with correct
+            #  child_plugin_instances set
+            inst = plugin_tree[0]
             outstr = inst.render_plugin(tmpctx, placeholder)
             plugin_output.append(outstr)
         template_vars['parent_output'] = plugin_output
         context.update(template_vars)
         return context
-    
+
     def get_form(self, request, obj=None, **kwargs):
         form = super(InheritPagePlaceholderPlugin, self).get_form(
             request, obj, **kwargs)
-        
-        # this is bit tricky, since i don't wont override add_view and 
-        # change_view 
+
+        # this is bit tricky, since i don't wont override add_view and
+        # change_view
         class FakeForm(object):
             def __init__(self, form, site):
                 self.form = form
                 self.site = site
-                
+
                 # base fields are required to be in this fake class, this may
                 # do some troubles, with new versions of django, if there will
                 # be something more required
                 self.base_fields = form.base_fields
-            
+
             def __call__(self, *args, **kwargs):
                 # instanciate the form on call
                 form = self.form(*args, **kwargs)
                 # tell form we are on this site
                 form.for_site(self.site)
                 return form
-            
+
         return FakeForm(
             form, self.cms_plugin_instance.page.site or self.page.site)
 
