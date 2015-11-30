@@ -3,3 +3,4 @@
 *.pyc
 local_settings.py
 djangocms_inherit.egg-info
+.tox
