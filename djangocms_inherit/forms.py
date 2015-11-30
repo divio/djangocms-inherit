@@ -1,4 +1,5 @@
-from django import forms
+# -*- coding: utf-8 -*-
+
 from django.forms.models import ModelForm
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _

@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from cms.utils.i18n import get_language_tuple
-from cms.models import CMSPlugin, Page
+from cms.models import CMSPlugin
 from cms.models.fields import PageField
 
 
