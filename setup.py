@@ -28,7 +28,7 @@ setup(
     packages=[
         'djangocms_inherit',
         'djangocms_inherit.migrations',
-        'djangocms_inherit.migrations_django'
+        'djangocms_inherit.south_migrations',
     ],
     license='LICENSE.txt',
     platforms=['OS Independent'],
