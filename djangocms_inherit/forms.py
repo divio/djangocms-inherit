@@ -20,10 +20,12 @@ class InheritForm(ModelForm):
         exclude = ('page', 'position', 'placeholder', 'language',
                    'plugin_type')
 
-    def for_site(self, site):
-        # override the page_link fields queryset to constrain just pages for
-        # current site
-        self.fields['from_page'].queryset = Page.objects.drafts().on_site(site)
+    @classmethod
+    def for_site(cls, site):
+        # override the page_link fields queryset
+        # to constrain just pages for current site
+        pages = Page.objects.drafts().on_site(site)
+        cls.base_fields['from_page'].queryset = pages
 
     def clean(self):
         cleaned_data = super(InheritForm, self).clean()
