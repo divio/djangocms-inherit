@@ -97,6 +97,8 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
 
         FormClass = super(InheritPagePlaceholderPlugin, self).get_form(
             request, obj, **kwargs)
+
+        # Set the available pages to match the current site.
         FormClass.for_site(site)
         return FormClass
 
