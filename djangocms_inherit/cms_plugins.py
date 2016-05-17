@@ -2,6 +2,11 @@ import copy
 
 from django.conf import settings
 from django.core.exceptions import FieldError
+try:
+    from django.shortcuts.sites import get_current_site
+except ImportError:
+    # Django <= 1.6 compatibility
+    from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
@@ -27,8 +32,10 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
     page_only = True
 
     def render(self, context, instance, placeholder):
-        template_vars = {'placeholder': placeholder}
-        template_vars['object'] = instance
+        template_vars = {
+            'object': instance,
+            'placeholder': placeholder,
+        }
         lang = instance.from_language
         request = context.get('request', None)
         if not lang:
@@ -50,8 +57,10 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             placeholder__slot__iexact=placeholder,
             parent__isnull=True
         ).order_by('position').select_related()
+
         plugin_output = []
         template_vars['parent_plugins'] = plugins
+
         for plg in plugins:
             tmpctx = copy.copy(context)
             tmpctx.update(template_vars)
@@ -81,29 +90,14 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
         return context
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super(InheritPagePlaceholderPlugin, self).get_form(
+        if obj and obj.page:
+            site = obj.page.site
+        else:
+            site = get_current_site(request)
+
+        FormClass = super(InheritPagePlaceholderPlugin, self).get_form(
             request, obj, **kwargs)
-
-        # this is bit tricky, since i don't wont override add_view and
-        # change_view
-        class FakeForm(object):
-            def __init__(self, form, site):
-                self.form = form
-                self.site = site
-
-                # base fields are required to be in this fake class, this may
-                # do some troubles, with new versions of django, if there will
-                # be something more required
-                self.base_fields = form.base_fields
-
-            def __call__(self, *args, **kwargs):
-                # instanciate the form on call
-                form = self.form(*args, **kwargs)
-                # tell form we are on this site
-                form.for_site(self.site)
-                return form
-
-        return FakeForm(
-            form, self.cms_plugin_instance.page.site or self.page.site)
+        FormClass.for_site(site)
+        return FormClass
 
 plugin_pool.register_plugin(InheritPagePlaceholderPlugin)
