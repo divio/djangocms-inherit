@@ -3,7 +3,7 @@ import copy
 from django.conf import settings
 from django.core.exceptions import FieldError
 try:
-    from django.shortcuts.sites import get_current_site
+    from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     # Django <= 1.6 compatibility
     from django.contrib.sites.models import get_current_site
