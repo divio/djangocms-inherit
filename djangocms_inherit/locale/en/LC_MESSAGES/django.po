@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-14 14:25+0200\n"
+"POT-Creation-Date: 2016-08-26 09:20-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,28 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: cms_plugins.py:21
+#: cms_plugins.py:28
 msgid "Inherit Plugins from Page"
 msgstr ""
 
-#: forms.py:13
-msgid "page"
-msgstr ""
-
-#: forms.py:29
+#: forms.py:34
 msgid "Language or Page must be filled out"
 msgstr ""
 
-#: models.py:15
+#: models.py:18
 msgid ""
 "Choose a page to include its plugins into this placeholder, empty will "
 "choose current page"
 msgstr ""
 
-#: models.py:19
+#: models.py:22
 msgid "language"
 msgstr ""
 
-#: models.py:20
+#: models.py:23
 msgid "Optional: the language of the plugins you want"
 msgstr ""

@@ -3,43 +3,40 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Panasoft <cc072aa3@opayq.com>, 2014
 # Vusheslavov Eduard <vey@live.ru>, 2014
 msgid ""
 msgstr ""
-"Project-Id-Version: django-cms\n"
+"Project-Id-Version: django CMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-14 14:25+0200\n"
-"PO-Revision-Date: 2014-09-26 13:20+0000\n"
-"Last-Translator: Vusheslavov Eduard <vey@live.ru>\n"
-"Language-Team: Ukrainian (http://www.transifex.com/projects/p/django-cms/language/uk/)\n"
+"POT-Creation-Date: 2016-08-26 09:20-0400\n"
+"PO-Revision-Date: 2016-08-26 13:20+0000\n"
+"Last-Translator: Paulo Alvarado <paulo.alvarado@divio.ch>\n"
+"Language-Team: Ukrainian (http://www.transifex.com/divio/django-cms/language/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: cms_plugins.py:21
+#: cms_plugins.py:28
 msgid "Inherit Plugins from Page"
 msgstr "Наслідувати від батьківської сторінки"
 
-#: forms.py:13
-msgid "page"
-msgstr "сторінка"
-
-#: forms.py:29
+#: forms.py:34
 msgid "Language or Page must be filled out"
-msgstr ""
+msgstr "Мова або Сторінка повинні бути заповнені"
 
-#: models.py:15
+#: models.py:18
 msgid ""
 "Choose a page to include its plugins into this placeholder, empty will "
 "choose current page"
-msgstr ""
+msgstr "Виберіть сторінку, щоб включити її розширення у даний заповнювач, порожнє значення означає вибір даної сторінки"
 
-#: models.py:19
+#: models.py:22
 msgid "language"
 msgstr "мова"
 
-#: models.py:20
+#: models.py:23
 msgid "Optional: the language of the plugins you want"
-msgstr ""
+msgstr "Не обов'язково: мова обраного вами розширення"
