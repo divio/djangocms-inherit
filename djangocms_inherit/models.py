@@ -22,3 +22,14 @@ class InheritPagePlaceholder(CMSPlugin):
         _("language"), max_length=5, choices=get_language_tuple(), blank=True,
         null=True, help_text=_("Optional: the language of the plugins "
                                "you want"))
+
+    # TODO: Remove this once < 3.3.1 support is dropped
+    cmsplugin_ptr = models.OneToOneField(
+        to=CMSPlugin,
+        parent_link=True,
+        related_name='djangocms_inherit_inheritpageplaceholder',
+    )
+
+    def copy_relations(self, oldinstance):
+        if oldinstance.from_page_id:
+            self.from_page_id = oldinstance.from_page_id

@@ -28,14 +28,58 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
     name = _("Inherit Plugins from Page")
     render_template = "cms/plugins/inherit_plugins.html"
     form = InheritForm
-    admin_preview = False
     page_only = True
 
+    def _render_plugins(self, plugins, context):
+        for plg in plugins:
+            inst, name = plg.get_plugin_instance()
+
+            if inst is None:
+                # Ghost plugin
+                continue
+
+            # Get child plugins for this plugin instance, if any child plugins
+            # exist
+            try:
+                # django CMS 3-
+                plugins = (
+                    inst
+                    .get_descendants(include_self=True)
+                    .order_by('placeholder', 'tree_id', 'level', 'position')
+                )
+            except (FieldError, TypeError):
+                # django CMS 3.1+
+                plugins = inst.get_descendants().order_by('path')
+
+            plugins = [inst] + list(plugins)
+
+            plugin_tree = downcast_plugins(plugins, select_placeholder=True)
+            plugin_tree = list(plugin_tree)
+            plugin_tree[0].parent_id = None
+            plugin_tree = build_plugin_tree(plugin_tree)
+            #  Replace plugin instance with plugin instance with correct
+            #  child_plugin_instances set
+            yield self._render_plugin(plugin_tree[0], context)
+
+    def _render_plugin(self, plugin, context):
+        cms_content_renderer = context.get('cms_content_renderer')
+
+        if cms_content_renderer:
+            # djangoCMS >= 3.4
+            content = cms_content_renderer.render_plugin(
+                instance=plugin,
+                context=context,
+                editable=False,
+            )
+        else:
+            plugin_context = copy.copy(context)
+            content = plugin.render_plugin(plugin_context)
+        return content
+
     def render(self, context, instance, placeholder):
-        template_vars = {
-            'object': instance,
-            'placeholder': placeholder,
-        }
+        context['object'] = instance
+        context['placeholder'] = placeholder
+
         lang = instance.from_language
         request = context.get('request', None)
         if not lang:
@@ -43,12 +87,16 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
                 lang = get_language_from_request(request)
             else:
                 lang = settings.LANGUAGE_CODE
+
         page = instance.placeholder.page
         from_page = instance.from_page
 
         if page.publisher_is_draft:
+            # If the plugin is being rendered in draft
+            # then show only the draft content of the linked page
             from_page = from_page.get_draft_object()
         else:
+            # Otherwise show the live content
             from_page = from_page.get_public_object()
 
         plugins = get_cmsplugin_queryset(request).filter(
@@ -58,35 +106,8 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             parent__isnull=True
         ).order_by('position').select_related()
 
-        plugin_output = []
-        template_vars['parent_plugins'] = plugins
-
-        for plg in plugins:
-            tmpctx = copy.copy(context)
-            tmpctx.update(template_vars)
-            inst, name = plg.get_plugin_instance()
-            if inst is None:
-                continue
-            # Get child plugins for this plugin instance, if any child plugins
-            # exist
-            try:
-                # django CMS 3-
-                plugins = [inst] + list(inst.get_descendants(include_self=True)
-                                        .order_by('placeholder', 'tree_id',
-                                                  'level', 'position'))
-            except (FieldError, TypeError):
-                # django CMS 3.1+
-                plugins = [inst] + list(inst.get_descendants().order_by('path'))
-            plugin_tree = downcast_plugins(plugins)
-            plugin_tree[0].parent_id = None
-            plugin_tree = build_plugin_tree(plugin_tree)
-            #  Replace plugin instance with plugin instance with correct
-            #  child_plugin_instances set
-            inst = plugin_tree[0]
-            outstr = inst.render_plugin(tmpctx, placeholder)
-            plugin_output.append(outstr)
-        template_vars['parent_output'] = plugin_output
-        context.update(template_vars)
+        context['parent_plugins'] = plugins
+        context['parent_output'] = self._render_plugins(plugins, context)
         return context
 
     def get_form(self, request, obj=None, **kwargs):
