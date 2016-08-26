@@ -23,7 +23,7 @@ class InheritPagePlaceholder(CMSPlugin):
         null=True, help_text=_("Optional: the language of the plugins "
                                "you want"))
 
-    #TODO: Remove this once < 3.3.1 support is dropped
+    # TODO: Remove this once < 3.3.1 support is dropped
     cmsplugin_ptr = models.OneToOneField(
         to=CMSPlugin,
         parent_link=True,

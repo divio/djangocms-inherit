@@ -42,14 +42,19 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             # exist
             try:
                 # django CMS 3-
-                plugins = [inst] + list(inst.get_descendants(include_self=True)
-                                        .order_by('placeholder', 'tree_id',
-                                                  'level', 'position'))
+                plugins = (
+                    inst
+                    .get_descendants(include_self=True)
+                    .order_by('placeholder', 'tree_id', 'level', 'position')
+                )
             except (FieldError, TypeError):
                 # django CMS 3.1+
-                plugins = [inst] + list(inst.get_descendants().order_by('path'))
+                plugins = inst.get_descendants().order_by('path')
 
-            plugin_tree = list(downcast_plugins(plugins, select_placeholder=True))
+            plugins = [inst] + list(plugins)
+
+            plugin_tree = downcast_plugins(plugins, select_placeholder=True)
+            plugin_tree = list(plugin_tree)
             plugin_tree[0].parent_id = None
             plugin_tree = build_plugin_tree(plugin_tree)
             #  Replace plugin instance with plugin instance with correct
