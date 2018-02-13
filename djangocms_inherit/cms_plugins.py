@@ -123,4 +123,5 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
         FormClass.for_site(site)
         return FormClass
 
+
 plugin_pool.register_plugin(InheritPagePlaceholderPlugin)
