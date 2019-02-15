@@ -28,6 +28,7 @@ class InheritPagePlaceholder(CMSPlugin):
         to=CMSPlugin,
         parent_link=True,
         related_name='djangocms_inherit_inheritpageplaceholder',
+        on_delete=models.CASCADE,
     )
 
     def copy_relations(self, oldinstance):
