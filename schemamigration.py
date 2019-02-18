@@ -56,5 +56,6 @@ def schemamigration():
     utility = ManagementUtility(argv)
     utility.execute()
 
+
 if __name__ == "__main__":
     schemamigration()

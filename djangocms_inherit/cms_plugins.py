@@ -11,6 +11,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+try:
+    from cms.plugin_rendering import ContentRenderer
+except ImportError:
+    # djangoCMS < 3.4
+    ContentRenderer = None
 from cms.utils import get_language_from_request
 from cms.utils.moderator import get_cmsplugin_queryset
 from cms.utils.plugins import downcast_plugins, build_plugin_tree
@@ -62,11 +67,9 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
             yield self._render_plugin(plugin_tree[0], context)
 
     def _render_plugin(self, plugin, context):
-        cms_content_renderer = context.get('cms_content_renderer')
-
-        if cms_content_renderer:
+        if ContentRenderer is not None:
             # djangoCMS >= 3.4
-            content = cms_content_renderer.render_plugin(
+            content = ContentRenderer(context['request']).render_plugin(
                 instance=plugin,
                 context=context,
                 editable=False,
@@ -122,5 +125,6 @@ class InheritPagePlaceholderPlugin(CMSPluginBase):
         # Set the available pages to match the current site.
         FormClass.for_site(site)
         return FormClass
+
 
 plugin_pool.register_plugin(InheritPagePlaceholderPlugin)
